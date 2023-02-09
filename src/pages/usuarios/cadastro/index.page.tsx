@@ -1,3 +1,4 @@
+import { api } from "@/api/api";
 import { Button, Heading, Text, TextArea, TextInput } from "@ignite-ui/react";
 import { Container } from "@mui/system";
 import { useRouter } from "next/router";
@@ -8,14 +9,14 @@ import { z } from "zod";
 import { Form, Header, Footer } from "./styles";
 
 const usuarioFormSchema = z.object({
-    usuarioName: z.string().transform((usuarioName) => usuarioName.toUpperCase()),
-    sexo: z.string().transform((vacinaName) => vacinaName.toUpperCase()),
-    dataNascimento: z.date(),
+    nome: z.string(),
+    sexo: z.string(),
+    dt_nasc: z.date(),
     logradouro: z.string(),
     numero: z.number(),
     setor: z.string(),
     cidade: z.string(),
-    estado: z.string()
+    uf: z.string()
 })
 
 type usuarioFormData = z.infer<typeof usuarioFormSchema>
@@ -34,7 +35,8 @@ export default function CadastroUsuario() {
     } = useForm<usuarioFormData>()
 
     async function create(data: usuarioFormData) {
-        console.log(data)
+        api.post('/usuarios/criar', data).then(response => console.log(response))
+        router.push(`/usuarios`)
     }
 
     return (
@@ -48,15 +50,15 @@ export default function CadastroUsuario() {
                 </Header>
                 <label>
                     <Text size="sm">Nome</Text>
-                    <TextInput {...register('usuarioName')} />
+                    <TextInput {...register('nome')} />
                 </label>
                 <label>
                     <Text size="sm">Sexo</Text>
-                    <TextInput {...register('sexo')}  />
+                    <TextInput maxLength={1} {...register('sexo')}  />
                 </label>
                 <label>
                     <Text size="sm">Data de nascimento</Text>
-                    <TextInput type="date" {...register('dataNascimento')}  />
+                    <TextInput type="date" {...register('dt_nasc')}  />
                 </label>
                 <label>
                     <Text size="sm">Logradouro</Text>
@@ -76,7 +78,7 @@ export default function CadastroUsuario() {
                 </label>
                 <label>
                     <Text size="sm">Estado</Text>
-                    <TextInput {...register('estado')}  />
+                    <TextInput maxLength={2} {...register('uf')}  />
                 </label>
                 <Footer>
                 <Button variant="tertiary" type="reset" onClick={closeModal}>

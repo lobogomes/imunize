@@ -8,7 +8,6 @@ export const Container = styled('div', {
   display: 'flex',
   alignItems: 'center',
   gap: '$20',
-  backgroundImage: '../../assets/bg.jpg'
 })
 
 export const Hero = styled('div', {
@@ -34,7 +33,6 @@ export const Hero = styled('div', {
 })
 
 export const Preview = styled('div', {
-  paddingRight: '$8',
   overflow: 'hidden',
 
   '@media(max-width: 600px)': {

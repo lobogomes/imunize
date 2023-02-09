@@ -34,8 +34,8 @@ const columns: GridColDef[] = [
         <DataGrid
           rows={rows}
           columns={columns}
-          pageSize={9}
-          rowsPerPageOptions={[9]}
+          pageSize={2}
+          rowsPerPageOptions={[2]}
           checkboxSelection
           
         />

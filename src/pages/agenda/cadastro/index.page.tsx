@@ -7,13 +7,14 @@ import { z } from "zod";
 import React from 'react';
 import Modal from 'react-modal';
 import { useRouter } from "next/router";
+import { api } from "@/api/api";
 
 
 const agendaFormSchema = z.object({
-    usuarioName: z.string().transform((usuarioName) => usuarioName.toUpperCase()),
-    vacinaName: z.string().transform((vacinaName) => vacinaName.toUpperCase()),
-    dataAgendada: z.date(),
-    observacao: z.string()
+    usuarioId: z.number(),
+    vacinaId: z.number(),
+    data: z.date(),
+    observacoes: z.string()
 })
 
 type AgendaFormData = z.infer<typeof agendaFormSchema>
@@ -33,7 +34,8 @@ export default function CadastroAgenda() {
     } = useForm<AgendaFormData>()
 
     async function create(data: AgendaFormData) {
-        console.log(data)
+        api.post('/agendas/criar', data).then(response => console.log(response))
+        router.push(`/agenda`)
     }
 
     return (
@@ -47,20 +49,20 @@ export default function CadastroAgenda() {
                         </a>
                     </Header>
                     <label>
-                        <Text size="sm">Nome do paciente</Text>
-                        <TextInput {...register('usuarioName')} />
+                        <Text size="sm">ID do Paciente</Text>
+                        <TextInput type="number" min={0} {...register('usuarioId')} />
                     </label>
                     <label>
-                        <Text size="sm">Vacina</Text>
-                        <TextInput  {...register('vacinaName')} />
+                        <Text size="sm">ID da Vacina</Text>
+                        <TextInput type="number" min={0} {...register('vacinaId')} />
                     </label>
                     <label>
                         <Text size="sm">Data e Horário</Text>
-                        <TextInput type="datetime-local"  {...register('dataAgendada')} />
+                        <TextInput type="datetime-local"  {...register('data')} />
                     </label>
                     <label>
                         <Text size="sm">Observação</Text>
-                        <TextArea {...register('observacao')} />
+                        <TextArea {...register('observacoes')} />
                     </label>
                     <Footer>
                         <Button variant="tertiary" type="reset" onClick={closeModal}>

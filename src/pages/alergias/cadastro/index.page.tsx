@@ -1,5 +1,7 @@
+import { api } from "@/api/api";
 import { Button, Heading, Text, TextArea, TextInput } from "@ignite-ui/react";
 import { Container } from "@mui/system";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { X } from "phosphor-react";
 import React from "react";
@@ -8,7 +10,7 @@ import { z } from "zod";
 import { Form, Header, Footer } from "./styles";
 
 const alergiaFormSchema = z.object({
-    alergiaName: z.string().transform((usuarioName) => usuarioName.toUpperCase()),
+    nome: z.string().transform((usuarioName) => usuarioName.toUpperCase()),
 })
 
 type AlergiaFormData = z.infer<typeof alergiaFormSchema>
@@ -27,7 +29,8 @@ export default function CadastroAlergia() {
     } = useForm<AlergiaFormData>()
 
     async function create(data: AlergiaFormData) {
-        console.log(data)
+        api.post('/alergias/criar', data).then(response => console.log(response))
+        router.push(`/alergias`)
     }
 
     return (
@@ -41,7 +44,7 @@ export default function CadastroAlergia() {
                 </Header>
                 <label>
                     <Text size="sm">Nome da alergia</Text>
-                    <TextInput {...register('alergiaName')} />
+                    <TextInput {...register('nome')} />
                 </label>
                 <Footer>
                 <Button variant="tertiary" type="reset" onClick={closeModal}>

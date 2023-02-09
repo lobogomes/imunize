@@ -1,10 +1,5 @@
-import { Button, styled } from '@ignite-ui/react'
+import { Button, Box, styled } from '@ignite-ui/react'
 
-export const Box = styled('main', {
-    maxWidth: 1152,
-    margin: '$2 auto $4',
-    padding: '0 $4'
-})
 
 export const Container = styled('div', {
     maxWidth: 1152,
@@ -17,3 +12,17 @@ export const Container = styled('div', {
         width: 200
     }
 })
+
+export const TableBox = styled(Box, {
+    width: '100%',
+    height: 630,
+    display: 'flex',
+    flexDirection: 'column',
+    maxWidth: 1152,
+    margin: '$20 auto $2',
+    padding: '$4 $4',
+    marginTop: '$6',
+    justifyContent: 'center',
+
+})
+

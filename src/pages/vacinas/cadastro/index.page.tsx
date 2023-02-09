@@ -1,3 +1,4 @@
+import { api } from "@/api/api";
 import { Button, Heading, Text, TextArea, TextInput } from "@ignite-ui/react";
 import { Container } from "@mui/system";
 import axios from "axios";
@@ -9,7 +10,7 @@ import { z } from "zod";
 import { Form, Header, Footer } from "./styles";
 
 const vacinaFormSchema = z.object({
-    vacinaName: z.string().transform((usuarioName) => usuarioName.toUpperCase()),
+    titulo: z.string(),
     intervalo: z.number(),
     periodicidade: z.number(),
     doses: z.number(),
@@ -33,8 +34,8 @@ export default function CadastroVacina() {
     } = useForm<vacinaFormData>()
 
     async function create(data: vacinaFormData) {
-        axios.post(`someapi`, data)
-        console.log(data)
+        api.post('/vacinas/criar', data).then(response => console.log(response))
+        router.push(`/vacinas`)
     }
     return (
         <Container>
@@ -47,7 +48,7 @@ export default function CadastroVacina() {
                 </Header>
                 <label>
                     <Text size="sm">Título</Text>
-                    <TextInput {...register('vacinaName')}  />
+                    <TextInput {...register('titulo')}  />
                 </label>
                 <label>
                     <Text size="sm">Intervalo</Text>
