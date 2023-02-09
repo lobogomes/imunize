@@ -1,10 +1,10 @@
 import { Navbar } from "@/components/Navbar";
-import { Container, LoadData, TableBox, } from "./styles";
-import { Button, Text } from "@ignite-ui/react"
+import { Container, TableBox, } from "./styles";
+import { Button } from "@ignite-ui/react"
 import { Pen, Plus, Trash } from "phosphor-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { DataGrid, GridActionsCellItem, GridColDef, GridColumns } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColumns } from "@mui/x-data-grid";
 import { api } from "@/api/api";
 
 

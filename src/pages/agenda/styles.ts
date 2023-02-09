@@ -1,4 +1,5 @@
-import { Box, Button, styled } from '@ignite-ui/react'
+import { Box, Button, Checkbox, styled, TextInput } from '@ignite-ui/react'
+import { Paper } from '@mui/material'
 
 export const Filter = styled('main', {
     maxWidth: 1152,
@@ -12,22 +13,35 @@ export const Form = styled(Box, {
     flexDirection: 'row',
     gap: '$4',
     alignContent: 'center',
-
+    justifyContent: 'flex-end',
     label: {
         display: 'flex',
         flexDirection: 'column',
         gap: '$2',
+        [ `> ${TextInput}`]: {
+            backgroundColor: '$black',
+            width: 200
+        },
     },
 
-    'input::-webkit-calendar-picker-indicator': {
-        filter: 'invert(100%)'
+    div: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '$2',
+        alignItems: 'end',
+        [ `> ${Checkbox}`]: {
+            backgroundColor: '$black',
+    
+        }
     },
 
     [ `> ${Button}`]: {
         marginTop: '$7',
         backgroundColor: '$black',
-        width: 300
-    }
+        width: 200
+    },
+
+
 })
 
 export const Container = styled('div', {
@@ -55,4 +69,24 @@ export const TableBox = styled(Box, {
     table: {
         color: 'White'
     },
+})
+
+export const ModalBox = styled(Box, {
+    width: 300,
+    height: 300,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    div: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '$2',
+        alignItems: 'end',
+        [ `> ${Checkbox}`]: {
+            backgroundColor: '$black',
+    
+        }
+    },
+
+
 })

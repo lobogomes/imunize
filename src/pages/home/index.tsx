@@ -1,7 +1,6 @@
 import { Button, Heading, Text } from '@ignite-ui/react'
 import Image from 'next/image'
 import { Container, Hero, Preview } from './styles'
-import bgImage from '../../assets/preview.png'
 import linesImage from '../../assets/lines-bg.png'
 import { ArrowRight } from 'phosphor-react'
 import { useRouter } from 'next/router'

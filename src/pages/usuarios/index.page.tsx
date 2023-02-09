@@ -1,25 +1,19 @@
 import { Navbar } from "@/components/Navbar";
-import { Container, TableBox } from "./styles";
-import { Button } from "@ignite-ui/react"
-import { Eye, Pen, Plus, Trash } from "phosphor-react";
+import { Container, ModalBox, TableBox } from "./styles";
+import { Box, Button, Text } from "@ignite-ui/react"
+import { Eye, Plus, Trash } from "phosphor-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { DataGrid, GridActionsCellItem, GridColDef, GridColumns } from "@mui/x-data-grid";
-import { DataGridPremium } from '@mui/x-data-grid-premium';
+import { DataGrid, GridActionsCellItem, GridColumns } from "@mui/x-data-grid";
 import { api } from "@/api/api";
-
+import { Dialog, Modal } from "@mui/material";
 
 export default function Users() {
 
     /** rotas */
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter()
-
-    function handleOpenModal() {
+    function goToCadastro() {
         router.push(`/usuarios/cadastro`)
-    }
-    function handleCloseModal() {
-        setIsModalOpen(false);
     }
 
     /** dados */
@@ -33,6 +27,22 @@ export default function Users() {
             })
     }, [])
 
+    /** dados modal */
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [dadosUser, setDadosUser] = useState([]);
+
+    function handleOpen(id: any) {
+        api.get('/usuarios/obter-por-id', { params: { id: id as number } })
+            .then((response) => {
+                setDadosUser(response.data)
+                console.log(dadosUser)
+            })
+        setIsModalOpen(true)
+    };
+    const handleClose = () => { setIsModalOpen(false) };
+
+
+    /** dados */
     const columns: GridColumns = [
         { field: 'id', headerName: 'ID', width: 30 },
         { field: 'nome', headerName: 'Nome', width: 230 },
@@ -50,8 +60,8 @@ export default function Users() {
             type: 'actions',
             width: 100,
             getActions: (params) => [
-                <GridActionsCellItem icon={<Eye color="white" size={20}/>} label="Edit"  onClick={() => { console.log('edit ' + params.id) }} />,
-                <GridActionsCellItem icon={<Trash color="white" size={20}/>} label="Delete" onClick={() => { console.log('delete ' + params.id) }} />,
+                <GridActionsCellItem icon={<Eye color="white" size={20} />} label="Edit" onClick={() => { handleOpen(params.id) }} />,
+                <GridActionsCellItem icon={<Trash color="white" size={20} />} label="Delete" onClick={() => { console.log('delete ' + params.id) }} />,
             ],
         },
     ];
@@ -60,7 +70,7 @@ export default function Users() {
         <>
             <Navbar></Navbar>
             <Container>
-                <Button variant="secondary" type="submit" size="md" onClick={handleOpenModal}>
+                <Button variant="secondary" type="submit" size="md" onClick={goToCadastro}>
                     <Plus />
                     Cadastrar
                 </Button>
@@ -76,9 +86,18 @@ export default function Users() {
                     columns={columns}
                     pageSize={9}
                     rowsPerPageOptions={[9]}
+                    getRowId={(row) => row.id}
                 />
             </TableBox>
-
+            <Dialog
+                open={isModalOpen}
+                onClose={handleClose}
+                fullWidth={true}
+            >
+                <ModalBox>
+                    aaaaaaaaa
+                </ModalBox>
+            </Dialog>
         </>
     )
 }

@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { Form, Header, Footer } from "./styles";
 import { z } from "zod";
 import React from 'react';
-import Modal from 'react-modal';
 import { useRouter } from "next/router";
 import { api } from "@/api/api";
 

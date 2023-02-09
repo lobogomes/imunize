@@ -1,7 +1,6 @@
 import { api } from "@/api/api";
-import { Button, Heading, Text, TextArea, TextInput } from "@ignite-ui/react";
+import { Button, Heading, Text, TextInput } from "@ignite-ui/react";
 import { Container } from "@mui/system";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { X } from "phosphor-react";
 import React from "react";

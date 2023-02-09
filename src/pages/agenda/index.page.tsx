@@ -1,21 +1,18 @@
 import { Navbar } from "@/components/Navbar";
-import { Container, Filter, Form, TableBox } from "./styles";
-import { Button, Text, TextInput } from "@ignite-ui/react"
-import { ArrowCircleDown, Pen, Plus, Trash } from "phosphor-react";
-import { useForm } from "react-hook-form";
+import { Container, Filter, Form, ModalBox, TableBox } from "./styles";
+import { Button, Checkbox, Heading, Text, TextInput } from "@ignite-ui/react"
+import { ArrowCircleDown, Plus, Trash } from "phosphor-react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { DataGrid, GridActionsCellItem, GridColDef, GridColumns } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColumns } from "@mui/x-data-grid";
 import { api } from "@/api/api";
+import { Dialog } from "@mui/material";
 
 const filterFormSchema = z.object({
-    vacinaName: z.string().transform((vacinaName) => vacinaName.toLowerCase()),
-    situacaoEnum: z.enum([
-        "Agendado", "Realizado", "Cancelado"
-    ]),
-    dataAgendada: z.date(),
-    dataRealizada: z.date()
+    situacao: z.string(),
+    filtrarHoje: z.boolean(),
 })
 
 type FilterFormData = z.infer<typeof filterFormSchema>
@@ -26,31 +23,50 @@ export default function Agenda() {
     const {
         register,
         handleSubmit,
+        control,
         formState: { isSubmitting, errors }
     } = useForm<FilterFormData>()
+
+    const [requestBody, setRequestBody] = useState({
+        filtrarSituacao: false,
+        situacao: 'string',
+        filtrarDataAtual: false
+    })
+
     async function filterItems(data: FilterFormData) {
         console.log(data)
-    }
+        setRequestBody({
+            filtrarSituacao: data.situacao == '' ? false : true,
+            situacao: data.situacao,
+            filtrarDataAtual: data.filtrarHoje
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const router = useRouter()
+        })
+        console.log(requestBody)
+        api.post('/agendas/obter-todos', {
+            filtrarSituacao: data.situacao == '' ? false : true,
+            situacao: data.situacao,
+            filtrarDataAtual: data.filtrarHoje
+        })
+            .then((response) => {
+                setData(response.data)
+                console.log(response.data)
+            })
+    }
 
     /** rotas */
-    function handleOpenModal() {
+    const router = useRouter()
+    function goToCadastro() {
         router.push(`/agenda/cadastro`)
-    }
-    function handleCloseModal() {
-        setIsModalOpen(false);
     }
 
     /** dados */
     const [data, setData] = useState([])
 
     useEffect(() => {
-        api.get('/agendas/obter-todos')
+        api.post('/agendas/obter-todos', requestBody)
             .then((response) => {
                 setData(response.data)
-                console.log(data)
+                console.log(response.status)
             })
     }, [])
 
@@ -60,7 +76,6 @@ export default function Agenda() {
         { field: 'situacao', headerName: 'Situação', width: 150 },
         { field: 'data_situacao', headerName: 'Data Situação', type: 'date', width: 150 },
         { field: 'observacoes', headerName: 'Observações', width: 300 },
-        { field: 'vacina.titulo', headerName: 'Vacina', width: 150 },
         {
             field: 'actions',
             headerName: 'Ação',
@@ -68,39 +83,63 @@ export default function Agenda() {
             type: 'actions',
             width: 100,
             getActions: (params) => [
-                <GridActionsCellItem icon={<ArrowCircleDown color="white" size={20}/>} label="Edit"  onClick={() => { console.log('edit ' + params.id) }} />,
-                <GridActionsCellItem icon={<Trash color="white" size={20}/>} label="Delete" onClick={() => { console.log('delete ' + params.id) }} />,
+                <GridActionsCellItem icon={<ArrowCircleDown color="white" size={20} />} label="Edit" onClick={() => { handleOpen(params.id) }} />,
+                <GridActionsCellItem icon={<Trash color="white" size={20} />} label="Delete" onClick={() => { console.log('delete ' + params.id) }} />,
             ],
         },
     ];
+
+    /** modal */
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [idAgenda, setIdAgenda] = useState(0);
+
+    function handleOpen(id: any) {
+        setIdAgenda(id as number)
+        setIsModalOpen(true)
+    };
+
+    const handleClose = () => { setIsModalOpen(false) };
+
+    function atualizarAgenda(data: any){
+        api.get('/agendas/atualizar-status', { params: { id: data.id, situacao: data.situacao } })
+        .then((response) => {
+        })
+    }
 
     return (
         <>
             <Navbar></Navbar>
             <Container>
-                <Button variant="secondary" type="submit" size="md" onClick={handleOpenModal}>
+                <Button variant="secondary" type="submit" size="md" onClick={goToCadastro}>
                     <Plus />
                     Cadastrar
                 </Button>
             </Container>
             <Filter>
-                <Form as="form" >
-                    <label>
-                        <Text size="sm">Vacina</Text>
-                        <TextInput />
-                    </label>
+                <Form as="form" onSubmit={handleSubmit(filterItems)}>
+                    <div>
+                        <Controller
+                            name="filtrarHoje"
+                            control={control}
+                            render={({ field }) => {
+                                return (<Checkbox
+                                    onCheckedChange={(checked) => {
+                                        field.onChange(checked == true)
+                                        console.log(field.value)
+                                    }}
+                                    checked={field.value}
+
+                                />
+                                )
+                            }}
+                        />
+                        <Text size="sm">Filtrar por Hoje</Text>
+                    </div>
                     <label>
                         <Text size="sm">Situação</Text>
-                        <TextInput />
+                        <TextInput width={800} {...register('situacao')} />
                     </label>
-                    <label>
-                        <Text size="sm">Data Agendada</Text>
-                        <TextInput type="date" />
-                    </label>
-                    <label>
-                        <Text size="sm">Data Realizada</Text>
-                        <TextInput type="date" />
-                    </label>
+
                     <Button type="submit" size="md" >
                         Pesquisar
                     </Button>
@@ -120,7 +159,19 @@ export default function Agenda() {
                     />
                 </TableBox>
             </Filter>
-
+            <Dialog
+                open={isModalOpen}
+                onClose={handleClose}
+            >
+                <ModalBox>
+                    <Heading as="h1" size="md">Status Agenda</Heading>
+                    <div>
+                    <Checkbox /> <Text size='sm'>Concluída</Text>
+                    </div>
+                    <div><Checkbox /> <Text size='sm'>Cancelada</Text></div>
+                    <Button onClick={atualizarAgenda}>Atualizar</Button>
+                </ModalBox>
+            </Dialog>
         </>
     )
 }

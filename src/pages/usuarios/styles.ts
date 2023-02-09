@@ -26,3 +26,12 @@ export const TableBox = styled(Box, {
         color: 'White'
     },
 })
+
+export const ModalBox = styled(Box, {
+    width: '100%',
+    height: 400,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+
+})

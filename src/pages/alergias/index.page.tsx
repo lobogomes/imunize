@@ -27,12 +27,13 @@ export default function Alergias() {
     const [data, setData] = useState([])
 
     useEffect(() => {
-        api.get('/alergias/obter-todos')
-            .then((response) => {
-                setData(response.data)
+        fetch('http://localhost:8080/alergias/obter-todos')
+            .then((res) => res.json())
+            .then((data) => {
+                setData(data)
                 console.log(data)
             })
-    }, [])
+    }, []);
 
 
     const columns: GridColumns = [
@@ -84,6 +85,7 @@ export default function Alergias() {
                     columns={columns}
                     pageSize={9}
                     rowsPerPageOptions={[9]}
+
                 />
             </TableBox>
         </>
